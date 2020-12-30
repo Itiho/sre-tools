@@ -1,0 +1,27 @@
+- name: Remove atalho do PrintScreen padrão
+  dconf:
+    key: "/org/cinnamon/desktop/keybindings/media-keys/screenshot"
+    value: "@as []"
+  become: true
+  become_user: "{{ default_user }}"
+
+- name: Configura custom0 keybind
+  dconf:
+    key: "/org/cinnamon/desktop/keybindings/custom-list"
+    value: "['custom0']"
+  become: true
+  become_user: "{{ default_user }}"
+
+- name: Configura atalho Flameshot
+  dconf:
+    key: "/org/cinnamon/desktop/keybindings/custom-keybindings/custom0/{{ item.key }}"
+    value: "{{ item.value }}"
+  become: true
+  become_user: "{{ default_user }}"
+  loop:
+    - key: binding
+      value: "['Print']"
+    - key: command
+      value: "'flameshot gui'"
+    - key: name
+      value: "'Flameshot'"

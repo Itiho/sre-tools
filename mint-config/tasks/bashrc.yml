@@ -1,0 +1,30 @@
+- name: bash_rc alias
+  lineinfile:
+    path: /etc/bash.bashrc
+    regexp: "{{ item }}"
+    line: "{{ item }}"
+  tags:
+    - bashrc
+  loop:
+    - "alias p8='ping 8.8.8.8'"
+    - "alias p4='ping 8.8.4.4'"
+    - "alias tl='tail -f /var/log/syslog'"
+    - "alias prec='pre-commit run -a'"
+    - "alias git-local-clean=\"git branch -vv | grep origin | grep gone | awk '{print \\$1}' |xargs -L 1 git branch -d\""
+    - "alias git-remote-clean='git remote prune origin'"
+    - "alias git-clean='git checkout master && git pull && git-remote-clean && git-local-clean'"
+
+- name: enable bash completion in interactive shells
+  blockinfile:
+    path: /etc/bash.bashrc
+    block: |
+        # enable bash completion in interactive shells
+        if ! shopt -oq posix; then
+          if [ -f /usr/share/bash-completion/bash_completion ]; then
+            . /usr/share/bash-completion/bash_completion
+          elif [ -f /etc/bash_completion ]; then
+            . /etc/bash_completion
+          fi
+        fi
+  tags:
+    - bashrc

@@ -1,0 +1,7 @@
+- name: environment
+  lineinfile:
+    path: /etc/profile
+    regexp: "{{ item }}"
+    line: "{{ item }}"
+  loop:
+    - "export AWS_SDK_LOAD_CONFIG='1'"

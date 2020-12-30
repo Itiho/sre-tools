@@ -1,0 +1,9 @@
+- name: Installing python packages
+  pip:
+    name: 
+      - awscli
+      - pre-commit
+      - pywinrm
+    state: latest
+  tags:
+    - pip

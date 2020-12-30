@@ -1,0 +1,30 @@
+- include_tasks: bashrc.yml
+- include_tasks: directorys.yml
+- include_tasks: environment.yml
+- include_tasks: repositorys.yml
+- include_tasks: packages.yml
+- include_tasks: python.yml
+- include_tasks: hibernate.yml
+- include_tasks: terraform.yml
+- include_tasks: packer.yml
+- include_tasks: vagrant.yml
+- include_tasks: keybinds.yml
+- include_tasks: zsh.yml
+- include_tasks: kubernets.yml
+- include_tasks: security.yml
+
+- name: Habilita serviço do docker
+  service: 
+    name: docker
+    state: started
+    enabled: yes
+  tags:
+    - docker
+
+- name: Add the user to docker group
+  user:
+    name: "{{ default_user }}"
+    groups: docker
+    append: yes
+  tags:
+    - docker

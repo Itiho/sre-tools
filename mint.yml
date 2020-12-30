@@ -1,0 +1,16 @@
+- name: Configura mint/ubuntu/popOS
+  hosts: localhost
+  vars:
+    terraform_docs_version: 0.9.1
+    terraform_inventory_version: 0.9
+    tfsec_version: 0.19.0
+    minicube_version: 1.9.2
+    tflint_version: 0.15.1
+    packer_version: 1.4.5
+    vagrant_version: 2.2.7
+    stern_version: 1.11.0
+    k9s_version: 0.24.2
+    default_user: willian
+    default_user_path: /home/willian
+  roles: 
+    - mint-config

@@ -1,0 +1,28 @@
+########################## Vagrant
+- name: verifica versão vagrant
+  shell: "vagrant version | head -n 1 | grep -q {{vagrant_version}}"
+  failed_when: false
+  changed_when: false
+  register: vagrant_versions_match
+  tags:
+    - vagrant
+
+- name: Download and unzip vagrant
+  unarchive:
+    src: "https://releases.hashicorp.com/vagrant/{{ vagrant_version }}/vagrant_{{ vagrant_version }}_linux_amd64.zip"
+    dest: /usr/bin
+    remote_src: yes
+  tags:
+    - vagrant
+  when: vagrant_versions_match.rc != 0
+
+- name: Install vagrant plugins
+  shell: "vagrant plugin install  {{ item }}"
+  become: true
+  become_user: "{{ default_user }}"
+  loop:
+    - "winrm"
+    - "winrm-fs"
+    - "winrm-elevated"
+  tags:
+    - vagrant

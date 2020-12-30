@@ -1,0 +1,30 @@
+- name: Install zsh
+  apt:
+    name: zsh
+    state: present
+  register: zsh
+
+- name: Install oh-my-zsh
+  shell: wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O - | sh; zsh
+  become: true
+  become_user: "{{ default_user }}"
+  when: zsh.changed
+
+- name: Set zsh to default shell
+  shell: usermod --shell $(which zsh) "{{ default_user }}"
+  when: zsh.changed
+
+- name: zshrc alias
+  lineinfile:
+    path: /etc/zsh/zshrc
+    regexp: "{{ item }}"
+    line: "{{ item }}"
+  loop:
+    - "alias p8='ping 8.8.8.8'"
+    - "alias p4='ping 8.8.4.4'"
+    - "alias tl='tail -f /var/log/syslog'"
+    - "alias prec='pre-commit run -a'"
+    - "alias git-local-clean=\"git branch -vv | grep origin | grep gone | awk '{print \\$1}' |xargs -L 1 git branch -d\""
+    - "alias git-remote-clean='git remote prune origin'"
+    - "alias git-clean='git checkout master && git pull && git-remote-clean && git-local-clean'"
+

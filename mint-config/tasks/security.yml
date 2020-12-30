@@ -1,0 +1,20 @@
+- name: Create directorys
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_user }}"
+  with_items:
+    - '{{ default_user_path }}/.ssh'
+    - '{{ default_user_path }}/.aws'
+    - '{{ default_user_path }}/.kube'
+
+# - name: Copia aws
+#   copy:
+#     src: "{{ role_path }}/files/aws/"
+#     dest: {{ default_user_path }}/.aws
+
+# - name: Copia kube
+#   copy:
+#     src: "{{ role_path }}/files/kube/"
+#     dest: {{ default_user_path }}/.kube

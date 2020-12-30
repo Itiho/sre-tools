@@ -1,0 +1,85 @@
+########################## minibube
+- name: Check minibube version
+  shell: "minikube version | grep -q {{ minicube_version }}"
+  failed_when: false
+  changed_when: false
+  register: minicube_version_match
+
+- name: Install minibube
+  apt:
+    deb: https://github.com/kubernetes/minikube/releases/download/v{{ minicube_version }}/minikube_{{ minicube_version }}-0_amd64.deb
+  when: minicube_version_match.rc != 0
+
+########################## stern
+- name: Check stern version
+  shell: "stern --version | grep -q {{ stern_version }}"
+  failed_when: false
+  changed_when: false
+  register: stern_version_match
+
+- name: Install stern
+  get_url:
+    url: "https://github.com/wercker/stern/releases/download/{{ stern_version }}/stern_linux_amd64"
+    dest: /usr/local/bin/stern
+    mode: '0777'
+    force: yes
+  tags:
+    - stern
+  when: stern_version_match.rc != 0
+
+  ########################## kubectx
+- name: Check kubectx version
+  shell: "kubectx -h"
+  failed_when: false
+  changed_when: false
+  register: kubectx_match
+
+- name: Install kubectx
+  shell: "{{ item }}"
+  with_items:
+  - "git clone https://github.com/ahmetb/kubectx /opt/kubectx"
+  - "ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx"
+  - "ln -s /opt/kubectx/kubens /usr/local/bin/kubens"
+  - "mkdir -p /root/.oh-my-zsh/completions"
+  - "chmod -R 755 /root/.oh-my-zsh/completions"
+  - "ln -s /opt/kubectx/completion/kubectx.zsh /root/.oh-my-zsh/completions/_kubectx.zsh"
+  - "ln -s /opt/kubectx/completion/kubens.zsh /root/.oh-my-zsh/completions/_kubens.zsh"
+  - "mkdir -p {{ default_user_path }}/.oh-my-zsh/completions"
+  - "chmod -R 755 {{ default_user_path }}/.oh-my-zsh/completions"
+  - "ln -s /opt/kubectx/completion/kubectx.zsh {{ default_user_path }}/.oh-my-zsh/completions/_kubectx.zsh"
+  - "ln -s /opt/kubectx/completion/kubens.zsh {{ default_user_path }}/.oh-my-zsh/completions/_kubens.zsh"
+  when: kubectx_match.rc != 0
+
+########################## aws-iam-authenticator
+- name: Check aws-iam-authenticator version
+  shell: "aws-iam-authenticator version"
+  failed_when: false
+  changed_when: false
+  register: aws_iam_authenticator_version_match
+
+- name: Install aws-iam-authenticator
+  get_url:
+    url: "https://amazon-eks.s3.us-west-2.amazonaws.com/1.17.7/2020-07-08/bin/linux/amd64/aws-iam-authenticator"
+    dest: /usr/local/bin/aws-iam-authenticator
+    mode: '0777'
+    force: yes
+  tags:
+    - aws-iam-authenticator
+  when: aws_iam_authenticator_version_match.rc != 0
+
+  ########################## k9s
+- name: Check k9s version
+  shell: "k9s version | grep -q {{ k9s_version }}"
+  failed_when: false
+  changed_when: false
+  register: k9s_version_match
+
+- name: Install k9s
+  unarchive:
+    src: "https://github.com/derailed/k9s/releases/download/v{{ k9s_version }}/k9s_Linux_x86_64.tar.gz"
+    dest: /usr/bin
+    mode: '0777'
+    remote_src: yes
+  when: k9s_version_match.rc != 0
+  tags:
+    - k9s

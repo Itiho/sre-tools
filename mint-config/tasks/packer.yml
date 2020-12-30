@@ -1,0 +1,17 @@
+########################## packer
+- name: verifica versão packer
+  shell: "packer --version | head -n 1 | grep -q {{packer_version}}"
+  failed_when: false
+  changed_when: false
+  register: packer_versions_match
+  tags:
+    - packer
+
+- name: Download and unzip packer
+  unarchive:
+    src: "https://releases.hashicorp.com/packer/{{ packer_version }}/packer_{{ packer_version }}_linux_amd64.zip"
+    dest: /usr/bin
+    remote_src: yes
+  tags:
+    - packer
+  when: packer_versions_match.rc != 0

@@ -1,0 +1,93 @@
+########################## Terraform docs
+- name: Check terraform-docs version
+  shell: "terraform-docs --version | head -n 1 | grep -q {{ terraform_docs_version }}"
+  failed_when: false
+  changed_when: false
+  register: terraform_docs_versions_match
+
+- name: Download and unzip terraform-docs
+  get_url:
+    url: "https://github.com/segmentio/terraform-docs/releases/download/v{{ terraform_docs_version }}/terraform-docs-v{{ terraform_docs_version }}-linux-amd64"
+    dest: /usr/bin/terraform-docs
+    mode: '0777'
+    force: yes
+  tags:
+    - terraform-docs
+  when: terraform_docs_versions_match.rc != 0
+
+########################## Terraform inventory
+- name: Check terraform inventory version
+  shell: "terraform-inventory -version | head -n 1 | grep -q {{ terraform_inventory_version }}"
+  failed_when: false
+  changed_when: false
+  register: terraform_inventory_versions_match
+
+- name: Download and unzip terraform inventory
+  unarchive:
+    src: "https://github.com/adammck/terraform-inventory/releases/download/v{{ terraform_inventory_version }}/terraform-inventory_{{ terraform_inventory_version }}_linux_amd64.zip"
+    dest: /usr/bin
+    remote_src: yes
+  tags:
+    - terraform
+  when: terraform_inventory_versions_match.rc != 0
+
+########################## Terraform lint
+- name: Check terraform inventory version
+  shell: "tflint --version | head -n 1 | grep -q {{ tflint_version }}"
+  failed_when: false
+  changed_when: false
+  register: tflint_versions_match
+
+- name: Download and unzip terraform lint
+  unarchive:
+    src: "https://github.com/terraform-linters/tflint/releases/download/v{{ tflint_version }}/tflint_linux_amd64.zip"
+    dest: /usr/bin
+    remote_src: yes
+  tags:
+    - tflint
+  when: tflint_versions_match.rc != 0
+
+  ########################## tfsec
+- name: Check tfsec version
+  shell: "tfsec --version | grep -q {{ tfsec_version }}"
+  failed_when: false
+  changed_when: false
+  register: tfsec_version_match
+
+- name: Download tfsec
+  get_url:
+    url: "https://github.com/liamg/tfsec/releases/download/v{{ tfsec_version }}/tfsec-linux-amd64"
+    dest: /usr/bin/tfsec
+    mode: '0777'
+    force: yes
+  tags:
+    - tfsec
+  when: tfsec_version_match.rc != 0
+
+########################## tfswitch
+- name: Check tfswitch is installed
+  shell: "  '"
+  failed_when: false
+  changed_when: false
+  register: tfswitch_installed
+
+- name: Install tfswitch
+  shell: "curl -L https://raw.githubusercontent.com/warrensbox/terraform-switcher/release/install.sh | bash"
+  when: tfswitch_installed.rc != 0
+
+########################## Configs
+
+- name: Create directorys
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_user }}"
+  with_items:
+    - '{{ default_user_path }}/.terraform.d'
+    - '{{ default_user_path }}/.terraform.d/plugin-cache'
+
+- name: Copia terraformrc
+  copy:
+    src: "{{ role_path }}/files/terraformrc"
+    dest: {{ default_user_path }}/.terraformrc

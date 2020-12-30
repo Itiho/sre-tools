@@ -1,0 +1,8 @@
+- name: Create directory structure
+  win_file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ default_user }}"
+    group: "{{ default_user }}"
+  loop:
+    - "{{ default_user_path }}/projetos"

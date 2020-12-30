@@ -1,0 +1,114 @@
+---
+- name: Install a ca-certificates
+  apt:
+    name: ca-certificates
+    state: latest
+- name: update ca-certificates
+  command: update-ca-certificates
+- name: Add an apt key by id from a keyserver
+  apt_key:
+      keyserver: keyserver.ubuntu.com
+      id: "{{ item }}"
+  loop:
+    - A2F683C52980AECF
+    - EB3E94ADBE1229CF
+    - F6BC817356A3D45E
+    - FCAE110B1118213C
+    - 8A993C2521C5F0BA
+    - 7EA0A9C3F273FCD8
+    - 7EA0A9C3F273FCD8
+    - 18DF3741CDFFDE29
+    - 78BD65473CB3BD13
+    - 18AC26395E54716D
+    - 6A030B21BA07F4FB
+    #- 6494C6D6997C215E
+- name: Docker repository
+  apt_repository:
+    filename: docker
+    repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable'
+    update_cache: no
+    state: present
+  tags:
+    - repositories
+
+- name: virtualbox repository
+  apt_repository:
+    filename: virtualbox
+    repo: 'deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian focal contrib'
+    update_cache: no
+    state: present
+  tags:
+    - repositories
+
+- name: google-chrome repository
+  apt_repository:
+    filename: google-chrome
+    repo: 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main'
+    update_cache: no
+    state: present
+  tags:
+    - repositories
+
+- name: kubernetes repository
+  apt_repository:
+    filename: kubernetes
+    repo: 'deb https://apt.kubernetes.io/ kubernetes-xenial main'
+    update_cache: no
+    state: present
+  tags:
+    - repositories
+
+- name: remmina repository
+  apt_repository:
+    filename: remmina
+    repo: 'deb http://ppa.launchpad.net/remmina-ppa-team/remmina-next/ubuntu focal main'
+    update_cache: no
+    state: present
+  tags:
+    - repositories
+
+- name: golang-backports repository
+  apt_repository:
+    filename: golang-backports
+    repo: 'deb http://ppa.launchpad.net/longsleep/golang-backports/ubuntu bionic main'
+    update_cache: no
+    state: present
+  tags:
+    - repositories
+
+- name: vscode repository
+  apt_repository:
+    filename: vscode
+    repo: 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
+    update_cache: no
+    state: present
+  tags:
+    - repositories
+
+
+- name: microsoft repository
+  apt_repository:
+    filename: microsoft
+    repo: 'deb [arch=amd64] https://packages.microsoft.com/ubuntu/20.04/prod focal main'
+    update_cache: no
+    state: present
+  tags:
+    - repositories
+
+- name: ansible repository
+  apt_repository:
+    filename: ansible
+    repo: ppa:ansible/ansible
+    codename: bionic
+    update_cache: no
+    state: present
+
+- name: fortclient repository
+  apt_repository:
+    filename: fortclient
+    repo: 'deb [arch=amd64] https://repo.fortinet.com/repo/ubuntu/ /bionic multiverse'
+    update_cache: no
+    state: present
+  tags:
+    - repositories
+
