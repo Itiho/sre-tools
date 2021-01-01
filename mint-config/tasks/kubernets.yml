@@ -10,6 +10,21 @@
     deb: https://github.com/kubernetes/minikube/releases/download/v{{ minicube_version }}/minikube_{{ minicube_version }}-0_amd64.deb
   when: minicube_version_match.rc != 0
 
+########################## kind
+- name: Check kind version
+  shell: "kind version"
+  failed_when: false
+  changed_when: false
+  register: kind_match
+
+- name: Install kind
+  get_url:
+    url: "https://kind.sigs.k8s.io/dl/v0.9.0/kind-linux-amd64"
+    dest: /usr/local/bin/kind
+    mode: '0777'
+    force: yes
+  when: kind_match.rc != 0
+
 ########################## stern
 - name: Check stern version
   shell: "stern --version | grep -q {{ stern_version }}"
